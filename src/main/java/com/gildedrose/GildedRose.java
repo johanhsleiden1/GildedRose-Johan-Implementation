@@ -28,7 +28,7 @@ class GildedRose {
                 	increaseExtraQuality(i); 
                 } else {
                 	if (itemIsBackstagePass(i)) {
-                		items[i].quality = items[i].quality - items[i].quality;
+                		setQualityToZero(i);
                     } else {
                     	decreaseQuality(i);
                     }
