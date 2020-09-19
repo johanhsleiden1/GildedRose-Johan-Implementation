@@ -5,6 +5,7 @@ class GildedRose {
     private String backstagePasses = "Backstage passes to a TAFKAL80ETC concert"; 
     private String sulfuras = "Sulfuras, Hand of Ragnaros"; 
     private String agedBrie = "Aged Brie"; 
+    private int maxQuantity = 50; 
 
     public GildedRose(Item[] items) {
         this.items = items;
@@ -12,48 +13,68 @@ class GildedRose {
 
     public void updateQuality() {
         for (int i = 0; i < items.length; i++) {
-            if (!items[i].name.equals(agedBrie) && !items[i].name.equals(backstagePasses)) {
-            	this.decreaseQuality(i);
+            if (itemIsAgedBrie(i) || itemIsBackstagePass(i)) {
+            	increaseQuality(i);
             } else {
-                if (items[i].quality < 50) {
-                	this.increaseQualityTest(i); 
-
-                    if (items[i].name.equals(backstagePasses)) {
-                        if (items[i].sellIn < 11) {
-                        	this.increaseQuality(i); 
-                        }
-
-                        if (items[i].sellIn < 6) {
-                        	this.increaseQuality(i); 
-                        }
-                    }
-                }
+            	decreaseQuality(i); 
             }
 
-            if (!items[i].name.equals(sulfuras)) {
-                items[i].sellIn = items[i].sellIn - 1;
+            if (!itemIsSulfuras(i)) {
+            	decreaseSellIn(i);
             }
 
-            if (items[i].sellIn < 0) {
-                if (!items[i].name.equals(agedBrie)) {
-                    if (!items[i].name.equals(backstagePasses)) {
-                    	this.decreaseQuality(i);
-                    } else {
-                        items[i].quality = items[i].quality - items[i].quality;
-                    }
+            if (sellByDatePassed(i)) {
+                if (itemIsAgedBrie(i)) {
+                	increaseExtraQuality(i); 
                 } else {
-                	this.increaseQuality(i); 
+                	if (itemIsBackstagePass(i)) {
+                		items[i].quality = items[i].quality - items[i].quality;
+                    } else {
+                    	decreaseQuality(i);
+                    }
+                	
                 }
             }
         }
     }
     
-    private void increaseQualityTest(int index) {
-    		items[index].quality = items[index].quality + 1;
+    private Boolean itemIsAgedBrie(int index) {
+    	return items[index].name.equals(agedBrie);
+    }
+    
+    private Boolean itemIsBackstagePass(int index) {
+    	return items[index].name.equals(backstagePasses);
+    }
+    
+    private Boolean itemIsSulfuras(int index) {
+    	return items[index].name.equals(sulfuras);
+    }
+    
+    private Boolean sellByDatePassed(int index) {
+    	return items[index].sellIn < 0;
     }
     
     private void increaseQuality(int index) {
-    	if (items[index].quality < 50) {
+    	if (items[index].quality < maxQuantity) {
+    		items[index].quality = items[index].quality + 1;
+        	this.handleQualityBasedOnSellIn(index);
+    	}
+    }
+    
+    private void handleQualityBasedOnSellIn(int index) {
+    	 if (items[index].name.equals(backstagePasses)) {
+             if (items[index].sellIn < 11) {
+             	this.increaseExtraQuality(index); 
+             }
+
+             if (items[index].sellIn < 6) {
+             	this.increaseExtraQuality(index); 
+             }
+         }
+    }
+    
+    private void increaseExtraQuality(int index) {
+    	if (items[index].quality < maxQuantity) {
     		items[index].quality = items[index].quality + 1;
     	}
     }
@@ -65,4 +86,12 @@ class GildedRose {
 		   }
         }
     }
+    
+    private void decreaseSellIn(int index) {
+    	 items[index].sellIn = items[index].sellIn - 1;
+    }
+    
+    private void setQualityToZero(int index) {
+		items[index].quality = items[index].quality - items[index].quality;
+   }
 }
