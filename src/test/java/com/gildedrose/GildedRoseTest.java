@@ -15,6 +15,14 @@ class GildedRoseTest {
     }
     
     @Test
+    void updateQuality_QualityIncreasedToFour_AgedBrieIncreaseInQualityByTwoWhenSellinIsPassed() {
+        Item[] items = new Item[] { new Item("Aged Brie", -1, 2) };
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();
+        assertEquals(4, app.items[0].quality);
+    }
+    
+    @Test
     void updateQuality_QualityIs50_QualityShouldNeverGoPast50() {
         Item[] items = new Item[] { new Item("Aged Brie", 2, 50) };
         GildedRose app = new GildedRose(items);
@@ -74,6 +82,30 @@ class GildedRoseTest {
         GildedRose app = new GildedRose(items);
         app.updateQuality();             
         assertEquals(8, app.items[0].quality);
+    }
+    
+    @Test
+    void updateQuality_QualityOfBackstagePassIsZero_WhenSellInIsZero() {
+        Item[] items = new Item[] { new Item("Backstage passes to a TAFKAL80ETC concert", 0, 5) };
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();             
+        assertEquals(0, app.items[0].quality);
+    }
+    
+    @Test
+    void updateQuality_QualityOfConjuredItemIsTwo_QualityIsDecreasedByTwo() {
+        Item[] items = new Item[] { new Item("Conjured Item", 5, 4) };
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();             
+        assertEquals(2, app.items[0].quality);
+    }
+    
+    @Test
+    void updateQuality_QualityOfConjuredItemIsFour_QualityIsDecreasedByFourWhenSellinIsZero() {
+        Item[] items = new Item[] { new Item("Conjured Item", 0, 8) };
+        GildedRose app = new GildedRose(items);
+        app.updateQuality();             
+        assertEquals(4, app.items[0].quality);
     }
 
 }

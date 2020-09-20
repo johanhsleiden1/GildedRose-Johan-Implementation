@@ -1,7 +1,6 @@
 package com.gildedrose.items;
 
 import com.gildedrose.Item;
-import com.gildedrose.ItemChecker;
 
 public class Sulfuras extends ItemUpdater{
 
