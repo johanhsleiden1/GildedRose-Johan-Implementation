@@ -5,32 +5,59 @@ class GildedRose {
     private String backstagePasses = "Backstage passes to a TAFKAL80ETC concert"; 
     private String sulfuras = "Sulfuras, Hand of Ragnaros"; 
     private String agedBrie = "Aged Brie"; 
+    private String conjured = "Conjured"; 
     private int maxQuantity = 50; 
 
     public GildedRose(Item[] items) {
         this.items = items;
     }
+    
+    private Boolean itemIsAgedBrie(Item item) {
+    	return item.name.equals(agedBrie);
+    }
+    
+    private Boolean itemIsBackstagePass(Item item) {
+    	return item.name.equals(backstagePasses);
+    }
+    
+    private Boolean itemIsSulfuras(Item item) {
+    	return item.name.equals(sulfuras);
+    }
+    
+    private Boolean itemIsConjured(Item item) {
+    	return item.name.contains(conjured);
+    }
+    
+    private Boolean sellByDatePassed(Item item) {
+    	return item.sellIn < 0;
+    }
 
     public void updateQuality() {
-        for (int i = 0; i < items.length; i++) {
-            if (itemIsAgedBrie(i) || itemIsBackstagePass(i)) {
-            	increaseQuality(i);
+        for (Item item : items) {
+            if (itemIsAgedBrie(item) || itemIsBackstagePass(item)) {
+            	increaseQuality(item);
             } else {
-            	decreaseQuality(i); 
+            	decreaseQuality(item);             	
+            	if(itemIsConjured(item)) {
+            		decreaseQuality(item);
+            	}
             }
 
-            if (!itemIsSulfuras(i)) {
-            	decreaseSellIn(i);
+            if (!itemIsSulfuras(item)) {
+            	decreaseSellIn(item);
             }
 
-            if (sellByDatePassed(i)) {
-                if (itemIsAgedBrie(i)) {
-                	increaseExtraQuality(i); 
+            if (sellByDatePassed(item)) {
+                if (itemIsAgedBrie(item)) {
+                	increaseExtraQuality(item); 
                 } else {
-                	if (itemIsBackstagePass(i)) {
-                		setQualityToZero(i);
+                	if (itemIsBackstagePass(item)) {
+                		setQualityToZero(item);
                     } else {
-                    	decreaseQuality(i);
+                    	decreaseQuality(item);  	
+                    	if(itemIsConjured(item)) {
+                    		decreaseQuality(item);
+                    	}
                     }
                 	
                 }
@@ -38,60 +65,44 @@ class GildedRose {
         }
     }
     
-    private Boolean itemIsAgedBrie(int index) {
-    	return items[index].name.equals(agedBrie);
-    }
-    
-    private Boolean itemIsBackstagePass(int index) {
-    	return items[index].name.equals(backstagePasses);
-    }
-    
-    private Boolean itemIsSulfuras(int index) {
-    	return items[index].name.equals(sulfuras);
-    }
-    
-    private Boolean sellByDatePassed(int index) {
-    	return items[index].sellIn < 0;
-    }
-    
-    private void increaseQuality(int index) {
-    	if (items[index].quality < maxQuantity) {
-    		items[index].quality = items[index].quality + 1;
-        	this.handleQualityBasedOnSellIn(index);
+    private void increaseQuality(Item item) {
+    	if (item.quality < maxQuantity) {
+    		item.quality = item.quality + 1;
+        	this.handleQualityBasedOnSellIn(item);
     	}
     }
     
-    private void handleQualityBasedOnSellIn(int index) {
-    	 if (items[index].name.equals(backstagePasses)) {
-             if (items[index].sellIn < 11) {
-             	this.increaseExtraQuality(index); 
-             }
+    private void handleQualityBasedOnSellIn(Item item) {
+   	 if (item.name.equals(backstagePasses)) {
+            if (item.sellIn < 11) {
+            	this.increaseExtraQuality(item); 
+            }
 
-             if (items[index].sellIn < 6) {
-             	this.increaseExtraQuality(index); 
-             }
-         }
-    }
-    
-    private void increaseExtraQuality(int index) {
-    	if (items[index].quality < maxQuantity) {
-    		items[index].quality = items[index].quality + 1;
+            if (item.sellIn < 6) {
+            	this.increaseExtraQuality(item); 
+            }
+        }
+   }
+      
+    private void increaseExtraQuality(Item item) {
+    	if (item.quality < maxQuantity) {
+    		item.quality = item.quality + 1;
     	}
     }
     
-    private void decreaseQuality(int index) {
-        if (items[index].quality > 0) {
-		   if (!items[index].name.equals(sulfuras)) {
-		        items[index].quality = items[index].quality - 1;
+    private void decreaseQuality(Item item) {
+        if (item.quality > 0) {
+		   if (!item.name.equals(sulfuras)) {
+		        item.quality = item.quality - 1;
 		   }
         }
     }
     
-    private void decreaseSellIn(int index) {
-    	 items[index].sellIn = items[index].sellIn - 1;
+    private void decreaseSellIn(Item item) {
+    	 item.sellIn = item.sellIn - 1;
     }
     
-    private void setQualityToZero(int index) {
-		items[index].quality = items[index].quality - items[index].quality;
+    private void setQualityToZero(Item item) {
+		item.quality = item.quality - item.quality;
    }
 }
